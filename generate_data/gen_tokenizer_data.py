@@ -76,26 +76,26 @@ def generate_token_examples(
     rounds_needed = (min_token_freq + 2) // 3  # 每个token平均可以生成3种模式
 
     raw_to_r2l_instruction_list = [
-        "Convert right to left way text to normal way",
-        "Transform reversed text back to normal reading order",
-        "Change text from right-to-left to standard left-to-right format",
-        "Restore reversed text to its original character order",
-        "Return this backwards text to normal reading direction",
-        "Revert right-to-left text to conventional reading order",
-        "Convert reversed character sequence back to normal",
-        "Fix the direction of this text to read from left to right",
-        "Normalize the character order in this reversed text",
-        "Correct the reading direction of this text",
-        "Restore the natural reading order of this reversed text",
-        "Make this right-to-left text readable in standard format",
-        "Repair the character sequence of this reversed text",
-        "Adjust this backwards text to read normally",
-        "Reorganize this reversed text to conventional reading order",
-        "Decode this right-to-left text to normal format",
-        "Return this text to proper reading direction",
-        "Process reversed text to display in regular order",
-        "Translate this backwards text to standard character ordering",
-        "Fix this reversed text so it reads naturally"
+        "Represent text in a right to left way",
+        "Convert this text to read from right to left",
+        "Transform the following text to read backwards",
+        "Reverse the character order in this text",
+        "Display this text in reverse character order",
+        "Change the direction of text to be read from right to left",
+        "Flip the character order in this text",
+        "Rearrange these characters to read from right to left",
+        "Format this text to be read in reverse order",
+        "Mirror the character sequence in this text",
+        "Present this text in a way that reads from the end to the beginning",
+        "Invert the direction of character placement in this text",
+        "Turn this text around to read from right to left",
+        "Process this text to reverse its character ordering",
+        "Modify this text to have a right-to-left reading direction",
+        "Apply right-to-left character ordering to this text",
+        "Restructure this text to read backwards by character",
+        "Arrange the characters in this text in reverse sequence",
+        "Encode this text in a right-to-left format",
+        "Change the reading direction of this text to right-to-left"
     ]
 
     r2l_to_raw_instruction_list = [
