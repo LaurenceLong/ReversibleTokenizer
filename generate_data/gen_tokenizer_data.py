@@ -19,11 +19,11 @@ sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from reversible_tokenizer import ReversibleTokenizer
 
 
-def save_examples(examples: List[str], output_file: str) -> None:
+def save_examples(examples: List[dict], output_file: str) -> None:
     """保存生成的示例到文件"""
     with open(output_file, 'w', encoding='utf-8') as f:
         for example in examples:
-            f.write(example + '\n')
+            f.write(json.dumps(example) + '\n')
     print(f"已保存 {len(examples)} 个训练示例到 {output_file}")
 
 
@@ -33,7 +33,7 @@ def generate_token_examples(
         min_token_freq: int = 5,
         exclude_special_tokens: bool = True,
         seed: int = 42
-) -> Tuple[List[str], Dict]:
+) -> Tuple[List[Dict], Dict]:
     """
     为tokenizer的词汇表生成训练示例。
 
@@ -75,6 +75,52 @@ def generate_token_examples(
     # 计算需要多少轮才能达到min_token_freq
     rounds_needed = (min_token_freq + 2) // 3  # 每个token平均可以生成3种模式
 
+    raw_to_r2l_instruction_list = [
+        "Convert right to left way text to normal way",
+        "Transform reversed text back to normal reading order",
+        "Change text from right-to-left to standard left-to-right format",
+        "Restore reversed text to its original character order",
+        "Return this backwards text to normal reading direction",
+        "Revert right-to-left text to conventional reading order",
+        "Convert reversed character sequence back to normal",
+        "Fix the direction of this text to read from left to right",
+        "Normalize the character order in this reversed text",
+        "Correct the reading direction of this text",
+        "Restore the natural reading order of this reversed text",
+        "Make this right-to-left text readable in standard format",
+        "Repair the character sequence of this reversed text",
+        "Adjust this backwards text to read normally",
+        "Reorganize this reversed text to conventional reading order",
+        "Decode this right-to-left text to normal format",
+        "Return this text to proper reading direction",
+        "Process reversed text to display in regular order",
+        "Translate this backwards text to standard character ordering",
+        "Fix this reversed text so it reads naturally"
+    ]
+
+    r2l_to_raw_instruction_list = [
+        "Convert right to left way text to normal way",
+        "Transform reversed text back to normal reading order",
+        "Change text from right-to-left to standard left-to-right format",
+        "Restore reversed text to its original character order",
+        "Return this backwards text to normal reading direction",
+        "Revert right-to-left text to conventional reading order",
+        "Convert reversed character sequence back to normal",
+        "Fix the direction of this text to read from left to right",
+        "Normalize the character order in this reversed text",
+        "Correct the reading direction of this text",
+        "Restore the natural reading order of this reversed text",
+        "Make this right-to-left text readable in standard format",
+        "Repair the character sequence of this reversed text",
+        "Adjust this backwards text to read normally",
+        "Reorganize this reversed text to conventional reading order",
+        "Decode this right-to-left text to normal format",
+        "Return this text to proper reading direction",
+        "Process reversed text to display in regular order",
+        "Translate this backwards text to standard character ordering",
+        "Fix this reversed text so it reads naturally"
+    ]
+
     with tqdm(total=min(max_examples, len(filtered_vocab) * rounds_needed)) as pbar:
         for round_idx in range(rounds_needed):
             if stats["examples_generated"] >= max_examples:
@@ -102,14 +148,20 @@ def generate_token_examples(
                 # 随机选择生成模式
                 mode = random.choice([1, 2])
 
+                # alpaca instruction
                 if mode == 1:
-                    # 模式1: text <|do_r2l_start|>text<|do_r2l_end|>
-                    example = f"{text} {ReversibleTokenizer.USER_TAG_START}{text}{ReversibleTokenizer.USER_TAG_END}"
+                    # 模式1: text -> <|do_r2l_start|>text<|do_r2l_end|>
+                    s_instruction = random.choice(raw_to_r2l_instruction_list)
+                    s_input = text
+                    s_output = f"{ReversibleTokenizer.USER_TAG_START}{text}{ReversibleTokenizer.USER_TAG_END}"
+                    example = dict(instruction=s_instruction, input=s_input, output=s_output, )
                     examples.append(example)
-
                 elif mode == 2:
-                    # 模式2: <|do_r2l_start|>text<|do_r2l_end|> text
-                    example = f"{ReversibleTokenizer.USER_TAG_START}{text}{ReversibleTokenizer.USER_TAG_END} {text}"
+                    # 模式2: <|do_r2l_start|>text<|do_r2l_end|> -> text
+                    s_instruction = random.choice(r2l_to_raw_instruction_list)
+                    s_input = f"{ReversibleTokenizer.USER_TAG_START}{text}{ReversibleTokenizer.USER_TAG_END}"
+                    s_output = text
+                    example = dict(instruction=s_instruction, input=s_input, output=s_output, )
                     examples.append(example)
 
                 # 更新统计信息

@@ -22,6 +22,10 @@ if __name__ == "__main__":
     print("\n编码后token_ids:")
     print(token_ids)
 
+    token_ids_1 = tokenizer(text=original_string)
+    print("\n编码后token_ids_1:")
+    print(token_ids_1)
+
     token_list = []
     for tok_id in token_ids:
         token_list.append(tokenizer.decode([tok_id]))
