@@ -1,13 +1,9 @@
 import functools
-import logging
+import os.path
 import re
 from typing import List, Optional, Union
 
 from transformers import PreTrainedTokenizerBase, BatchEncoding
-
-# 配置日志
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 class ReversibleTokenizer:
@@ -49,7 +45,7 @@ class ReversibleTokenizer:
         # 添加内部标记作为特殊标记
         special_tokens_dict = {'additional_special_tokens': [self.MARKER_START, self.MARKER_END]}
         num_added = self.tokenizer.add_special_tokens(special_tokens_dict)
-        logger.info(f"添加了 {num_added} 个内部标记: {special_tokens_dict['additional_special_tokens']}")
+        print(f"添加了 {num_added} 个内部标记: {special_tokens_dict['additional_special_tokens']}")
 
         # 替换原始方法
         self.tokenizer.encode = functools.partial(self.reversible_encode, self.tokenizer)
@@ -59,7 +55,7 @@ class ReversibleTokenizer:
         # 添加流式解码方法
         self.tokenizer.stream_decode = functools.partial(self.stream_decode, self.tokenizer)
 
-        logger.info(f"成功为tokenizer应用了反转补丁: {self.tokenizer.__class__.__name__}")
+        print(f"成功为tokenizer应用了反转补丁: {self.tokenizer.__class__.__name__}")
 
     def reversible_call_one(self, tokenizer: PreTrainedTokenizerBase,
                             text: Union[str, List[str], List[List[str]]],

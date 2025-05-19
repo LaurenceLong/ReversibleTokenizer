@@ -14,6 +14,9 @@ EXCLUDE_DIRS = {
     'node_modules',
     'build',
     'dist',
+    '.ipynb_checkpoints',
+    'unsloth_compiled_cache',
+    'Qwen2.5-7B-unsloth-bnb-4bit',
     'checkpoints',
     'data',
     # 添加其他你想要排除的目录
@@ -24,9 +27,12 @@ EXCLUDE_FILES = {
     '.DS_Store',
     '.gitignore',
     'assemble.py',
+    'hdf.sh',
+    'LICENSE',
     'disassemble.py',
     'test_tokenizer.py',
     'README.md',
+    'requirements.txt',
     # 添加其他你想要排除的文件
 }
 
